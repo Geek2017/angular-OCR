@@ -1,58 +1,99 @@
-<!DOCTYPE html>
+
 <html ng-app="ocrSelectAngularApp">
 <head>
 	<title>OCR Select</title>
 	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body ng-controller="OcrSelectCtrl as ocrselect">
-	<div id="grid-container" class="row">
-		<form>
-			<input on-file-change="ocrselect.fileChangeHandler" id="img-input" type="file" name="pic" accept="image/*, application/pdf">
+	<br><br><br>
+<center>	
+	<div class="card text-white bg-primary mb-3" style="max-width: 60rem;">
+		<div class="card-header">NowScan</div>
+		<div class="card-body">
+			<div id="grid-container" class="form-group">
+			
+					<input on-file-change="ocrselect.fileChangeHandler" id="img-input" type="file" name="pic" accept="image/*, application/pdf">
+		
+					<select ng-model="ocrselect.langs.selectedLang" name="language" id="language" ng-options="lang as lang for lang in ocrselect.langs.list">
+					</select>
+					<select ng-class="ocrselect.dropZone" ng-model="ocrselect.pdf.currentPage" name="pageSelect" id="pageSelect" ng-options="page as page for page in ocrselect.pdf.pageList" ng-change="ocrselect.onPageSelect(ocrselect.pdf.currentPage)">
+					</select>
+				<br><br>
+				<div id="image-section" >
 
-			<select ng-model="ocrselect.langs.selectedLang" name="language" id="language" ng-options="lang as lang for lang in ocrselect.langs.list">
-			</select>
-		</form>
-		<div id="image-section">
-			<form id="pdf-controls">
-				<select ng-class="ocrselect.dropZone" ng-model="ocrselect.pdf.currentPage" name="pageSelect" id="pageSelect" ng-options="page as page for page in ocrselect.pdf.pageList" ng-change="ocrselect.onPageSelect(ocrselect.pdf.currentPage)">
-				</select>
-			</form>
-			<div id="image-area" class="drop-zone" on-drag-over="ocrselect.dragOverHandler" on-drag-end="ocrselect.dragEndHandler" on-drop="ocrselect.dropHandler">
-				<canvas ng-model="imgUpload" ng-mousedown="ocrselect.initBox($event)" ng-mousemove="ocrselect.drawBox($event)" ng-mouseup="ocrselect.captureBox($event)" id="uploaded-img"></canvas>
-				<div ng-class="ocrselect.isActive" ng-style="ocrselect.boxSelect" id="box-select"></div>
-			</div>			
+						<div id="image-area" class="drop-zone" on-drag-over="ocrselect.dragOverHandler" on-drag-end="ocrselect.dragEndHandler" on-drop="ocrselect.dropHandler" >
+								<canvas ng-model="imgUpload" ng-mousedown="ocrselect.initBox($event)" ng-mousemove="ocrselect.drawBox($event)" ng-mouseup="ocrselect.captureBox($event)" id="uploaded-img"></canvas>
+								<div ng-class="ocrselect.isActive" ng-style="ocrselect.boxSelect" id="box-select"></div>
+							</div>
+
+					<form id="pdf-controls">
+						
+					</form>
+					
+				</div>
+					
+	
+					
+				
+								
 		</div>
-		<div id="results-area">
-			<canvas id="test-area"></canvas>
-			<div id="results">
-				<div id="progress">{{ocrselect.progress}}</div>
-				<div id="display">{{ocrselect.displayResults}}</div>				
+	</div>
+	<div id="results-area">
+			<canvas id="test-area"></canvas>	
+		</div>
+<div class="card-body">		
+	<div class="form-group">
+			
+			<div class="form-group">
+				<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text"><b>Name:</b></span>
+				 
+				</div>
+				<input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+				
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text"><b>Telephone:</b></span>
+				 
+				</div>
+				<input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+				
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+					<span class="input-group-text"><b>Address:</b></span>
+					 
+					</div>
+					<input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+					
+				</div>
+				</div>
 			</div>
 		</div>
 	</div>
+</center>	 
 
 
-	<!-- scripts here -->
-
-	<!-- jQuery -->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
-	<!-- Angular -->
+
 	<script src="angular.min.js"></script>
 	<script src="angular-route.min.js"></script>
 	<script src="angular-resource.min.js"></script>
-	<!-- <script src="angular.js"></script>
-	<script src="angular-route.js"></script>
-	<script src="angular-resource.js"></script> -->
 
-	<!-- pdf to image converter from pdf.js -->
 	<script type="text/javascript" src="external/pdf.js"></script>	
 
-	<!-- OCR API provided by tesseract.js:
-		http://tesseract.projectnaptha.com/#docs
-		https://github.com/naptha/tesseract.js -->
-	<script type="text/javascript" src="http://tenso.rs/tesseract.js"></script>
+
+        <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
 	<script type="text/javascript" src="app.js"></script>
 	<script type="text/javascript" src="allFactories.js"></script>
 	<script type="text/javascript" src="allControllers.js"></script>

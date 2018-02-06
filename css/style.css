@@ -129,9 +129,12 @@ table {
   border-spacing: 0; }
 
 .drop-zone {
-  border: 2px dashed #ccc; }
-  .drop-zone:hover {
-    border: 1px dashed #d4230f !important; }
+  border: 2px dashed #ccc; 
+  width: 600px;
+  position: absolute;
+  left: 150px;
+  top: 0px;
+}
 
 #image-section {
   width: 50%;
@@ -152,8 +155,8 @@ table {
       pointer-events: none;
       position: absolute !important;
       cursor: default !important;
-      background-color: rgba(239, 28, 190, 0.6);
-      border: 1px solid #b20e8c; }
+      background-color: rgba(28, 190, 239, 0.6);
+      border: 1px solid #ebe0e8; }
 
 .box-active {
   display: block !important; }

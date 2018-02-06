@@ -21,7 +21,12 @@
 			pageList: [1],
 			currentPage: 1
 		};
+	
+
+
 		vm.capturedCanvas = document.getElementById('test-area');
+
+		
 
 		vm.langs = {
 			list: ['dan', 'deu', 'eng', 'spa', 'fra', 'hin', 'ita', 'jpn', 'kor', 'lit', 'meme', 'por', 'rus', 'swe', 'tur'],
@@ -179,30 +184,62 @@
 			var options = imgPDF.getRenderOptions();
 			renderIMG(vm.capturedCanvas, options);
 			var tmpURL = vm.capturedCanvas.toDataURL("image/jpeg", 1.0);
-			imgPDF.prepOCR(tmpURL, runOCR);
+			// imgPDF.prepOCR(tmpURL, runOCR);
+			$scope.getcanvas();
 		}
-		function runOCR(imgObj){
-			Tesseract
-				.recognize(imgObj, {
-					progress: displayProgress,
-					lang: vm.langs.selectedLang
-				})
-			  	.then(function(textToDisplay){
-			  		displayResults(textToDisplay.text);
-			  		imgObj.onload = null;
-			  		URL.revokeObjectURL(imgObj.src);
-			  		console.log(this);
-			  	});
-		}
-		function displayProgress(progress){
-			$timeout(function(){
-				if(progress.recognized >= 0){
-					vm.progress = 'Progress: ' + Math.floor(100*progress.recognized) + '%';
-				}else{
-					vm.progress = 'Progress: ...';
-				}
-			},0);
-		}
+
+		$scope.getcanvas=function (){
+		 
+			var canvas=document.getElementById('test-area')
+			var dataURL = canvas.toDataURL();
+			console.log(dataURL);
+			
+			var language = $('#language').find(":selected").text();
+			// 'deu'
+			
+		
+			Tesseract.recognize(dataURL, language)
+					.then(function (res) {
+						console.log('result was:', res.text)
+                       
+					$('#ocroutput').val(res.text);
+   
+					// 	if (document.getElementById("ocrname").focus == true) {
+					// 		// document.getElementById("ocrname").value = res.text
+					// 		alert('1')
+					//    }else if(document.getElementById("ocrno").focus == true){
+					// 	//    document.getElementById("ocrno").value =	res.text
+					// 	alert('2')
+					//    }else{
+					// 	//    document.getElementById("ocradd").value = res.text
+					// 	alert('3')
+					//    }
+   
+					})
+		   }
+		// function runOCR(imgObj){
+		// 	Tesseract
+		// 		.recognize(imgObj, {
+		// 			progress: displayProgress,
+		// 			lang: vm.langs.selectedLang
+		// 		})
+		// 	  	.then(function(textToDisplay){
+		// 	  		displayResults(textToDisplay.text);
+		// 	  		imgObj.onload = null;
+		// 	  		URL.revokeObjectURL(imgObj.src);
+		// 	  		console.log(this);
+		// 	  	});
+		// }
+		// function displayProgress(progress){
+		// 	$timeout(function(){
+		// 		if(progress.recognized >= 0){
+		// 			vm.progress = 'Progress: ' + Math.floor(100*progress.recognized) + '%';
+		// 		}else{
+		// 			vm.progress = 'Progress: ...';
+		// 		}
+		// 	},0);
+		// }
+
 		function displayResults(results){
 			$timeout(function(){
 				vm.displayResults = results;
