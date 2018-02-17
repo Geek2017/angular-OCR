@@ -19,33 +19,9 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
-/* Clearfix */
-/*Responsiveness*/
-/*Vertical align center*/
-/*parent must have a given height*/
-/*hover background (change background color on hover)*/
-/*presets*/
-/*Grid*/
-/*The parent row/container*/
-/*mixin for each column of grid*/
-.row {
-  /*For modern browsers*/
-  /*For IE 6/7 (trigger hasLayout)*/ }
-  .row:before, .row:after {
-    content: "";
-    display: table; }
-  .row:after {
-    clear: both; }
-  .row {
-    zoom: 1; }
 
-/*color scheme*/
-/*presets*/
-/*interface*/
-/*header*/
-/*Dropdown menu (e.g. on a nav button)*/
-/*type*/
-/*presets*/
+
+
 strong {
   font-weight: 600; }
 
@@ -130,10 +106,63 @@ table {
 
 .drop-zone {
   border: 2px dashed #ccc; 
-  width: 600px;
-  position: absolute;
-  left: 150px;
-  top: 0px;
+  width: 580px;
+  height: 780px;
+  /* display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-align-content: center;
+  align-content: center; */
+}
+
+.container {
+  width: 200px;
+  height: 300px;
+
+}
+/* the scrollbar area itself */
+::-webkit-scrollbar {
+  
+}
+/* the up/down/left/right buttons */
+::-webkit-scrollbar-button {
+  
+}
+/* the zone where the scroll will happen */
+::-webkit-scrollbar-track {
+  
+}
+/* not sure what this is */ 
+::-webkit-scrollbar-track-piece {
+  
+}
+/* the famous "elevator" */
+::-webkit-scrollbar-thumb {
+  background-color: #444444;
+}
+/* what stands in the corner, between the horizontal and the vertical scrollbars */
+::-webkit-scrollbar-corner {
+  background-color: #375a7f;
+  
+}
+/* the resizer thingy into that corner */
+::-webkit-resizer {
+  
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
 
 #image-section {
@@ -161,18 +190,5 @@ table {
 .box-active {
   display: block !important; }
 
-#results-area {
-  width: 50%;
-  /*margin-right: $gutterPercent;*/
-  float: left; }
-  #results-area:nth-child(n) {
-    margin-right: 0; }
-  #results-area:last-child {
-    margin-right: 0; }
-  #results-area #results #progress {
-    background-color: #a5726a; }
-  #results-area #results div {
-    background-color: #77bb9e;
-    padding: 10px; }
-
-/*# sourceMappingURL=style.css.map */
+  
+   

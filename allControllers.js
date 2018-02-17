@@ -187,6 +187,55 @@
 			// imgPDF.prepOCR(tmpURL, runOCR);
 			$scope.getcanvas();
 		}
+		
+		$("#uploadit").click(function () {
+			$("#img-input").click();
+		});
+
+		function setfocus(){
+			var field1 = $('#field1');
+			var value = field1.val();
+			field1.val("");
+			field1.focus();
+			field1.val(value);
+			}
+			setfocus();
+
+		localStorage.setItem('val',2);
+		$scope.addfields=function(){
+			
+
+			
+
+			var counter = localStorage.getItem('val');
+			// alert(counter);
+	
+	 
+		if(counter>5){
+				// alert("Only 5 textboxes allow");
+				return false;
+		}else{
+	 
+		var newTextBoxDiv = $(document.createElement('div'))
+			 .attr("id", 'TextBoxDiv' + counter)
+			 .attr("class", 'input-group-prepend' );
+	 
+		newTextBoxDiv.after().html('<label class="editable input-group-text">Field #'+ counter + ' : </label>' +
+			  '<input type="text" class="form-control" name="textbox' + counter +
+			  '" id="field' + counter + '" value="" >');
+			 //  '<input type="button" value="X" id="removeButton">');
+	 
+		newTextBoxDiv.appendTo("#TextBoxesGroup");
+	 
+	 
+		counter++;
+		localStorage.setItem('val',counter);
+
+	
+			
+		
+	  }
+		}	
 
 		$scope.getcanvas=function (){
 		 
@@ -197,48 +246,71 @@
 			var language = $('#language').find(":selected").text();
 			// 'deu'
 			
+			
 		
 			Tesseract.recognize(dataURL, language)
 					.then(function (res) {
-						console.log('result was:', res.text)
-                       
-					$('#ocroutput').val(res.text);
-   
-					// 	if (document.getElementById("ocrname").focus == true) {
-					// 		// document.getElementById("ocrname").value = res.text
-					// 		alert('1')
-					//    }else if(document.getElementById("ocrno").focus == true){
-					// 	//    document.getElementById("ocrno").value =	res.text
-					// 	alert('2')
-					//    }else{
-					// 	//    document.getElementById("ocradd").value = res.text
-					// 	alert('3')
-					//    }
+						$scope.addfields();
+						console.log('result was:',language +"::"+ res.text)
+					    setfocus();
+					
+					if($('#field1').val()==''){	
+					 $('#field1').val(res.text);
+					 var ocrtel = $('#field2');
+					 var value = ocrtel.val();
+					 ocrtel.val("");
+					 ocrtel.focus();
+					 ocrtel.val(value);
+					 
+					}else if($('#field1').val()!=='' && $('#field2').val()==''){
+						$('#field2').val(res.text);
+						var ocradd = $('#field3');
+						var value = ocradd.val();
+						ocradd.val("");
+						ocradd.focus();
+						ocradd.val(value);
+					}else if($('#field2').val()!=='' && $('#field3').val()==''){
+						$('#field3').val(res.text);
+						var ocradd = $('#field4');
+						var value = ocradd.val();
+						ocradd.val("");
+						ocradd.focus();
+						ocradd.val(value);
+					}else if($('#field3').val()!=='' && $('#field4').val()==''){
+						$('#field4').val(res.text);
+						var ocradd = $('#field5');
+						var value = ocradd.val();
+						ocradd.val("");
+						ocradd.focus();
+						ocradd.val(value);
+					}else if($('#field4').val()!=='' && $('#field5').val()==''){
+						$('#field5').val(res.text);
+					if($('#field1').val()!==null&&
+					   $('#field2').val()!==null&&
+					   $('#field3').val()!==null&&
+					   $('#field4').val()!==null&&
+					   $('#field5').val()!==null){
+						
+					localStorage.setItem('filename',	
+						$('#field1').val()+'_'+
+						$('#field2').val()+'_'+
+						$('#field3').val()+'_'+
+						$('#field4').val()+'_'+
+						$('#field5').val());
+
+					}else{
+						alert('fields cant be blank');
+					}
+					}
+				
+				
+
    
 					})
+
+					
 		   }
-		// function runOCR(imgObj){
-		// 	Tesseract
-		// 		.recognize(imgObj, {
-		// 			progress: displayProgress,
-		// 			lang: vm.langs.selectedLang
-		// 		})
-		// 	  	.then(function(textToDisplay){
-		// 	  		displayResults(textToDisplay.text);
-		// 	  		imgObj.onload = null;
-		// 	  		URL.revokeObjectURL(imgObj.src);
-		// 	  		console.log(this);
-		// 	  	});
-		// }
-		// function displayProgress(progress){
-		// 	$timeout(function(){
-		// 		if(progress.recognized >= 0){
-		// 			vm.progress = 'Progress: ' + Math.floor(100*progress.recognized) + '%';
-		// 		}else{
-		// 			vm.progress = 'Progress: ...';
-		// 		}
-		// 	},0);
-		// }
+	
 
 		function displayResults(results){
 			$timeout(function(){
@@ -247,4 +319,68 @@
 		}
 	}
 
+	$(document).ready(function(){
+
+		
+	 
+		 $("#removeButton").click(function () {
+		if(counter==1){
+			  alert("No more textbox to remove");
+			  return false;
+		   }
+	 
+		counter--;
+	 
+			$("#TextBoxDiv" + counter).remove();
+	 
+		 });
+	 
+		 $("#getButtonValue").click(function () {
+	 
+		var msg = '';
+		for(i=1; i<counter; i++){
+			 msg += "\n Textbox #" + i + " : " + $('#textbox' + i).val();
+		}
+			  alert(msg);
+		 });
+	  });
+
+
+
+
+			document.getElementById("img-input").addEventListener("change", myFunction);
+
+			function myFunction() {
+				// alert('go')
+			var selectedFile = document.getElementById("img-input").files;
+			//Check File is not Empty
+			if (selectedFile.length > 0) {
+			// Select the very first file from list
+			var fileToLoad = selectedFile[0];
+			// FileReader function for read the file.
+			var fileReader = new FileReader();
+			var base64;
+			// Onload of file read the file content
+			fileReader.onload = function(fileLoadedEvent) {
+			base64 = fileLoadedEvent.target.result;
+			// Print data in console
+			// console.log(base64);
+			localStorage.setItem('PDFbase64',base64)
+			};
+			// Convert data to base64
+			fileReader.readAsDataURL(fileToLoad);
+			}
+			}
+		
+
+
+			window.downloadPDF = function () {
+			var dlnk = document.getElementById('saveit');
+			var a=document.getElementById("saveit");
+			a.setAttribute("download",localStorage.getItem('filename'));
+			dlnk.href = localStorage.getItem('PDFbase64');;
+
+			dlnk.click();
+			}
+			
 })();
