@@ -98,14 +98,14 @@
 
                                         <div id="image-area" class="drop-zone" on-drag-over="ocrselect.dragOverHandler" on-drag-end="ocrselect.dragEndHandler" on-drop="ocrselect.dropHandler" >
                                             
-                                        <!-- <canvas  ng-mousedown="ocrselect.initBox($event)" ng-mousemove="ocrselect.drawBox($event)" ng-mouseup="ocrselect.captureBox($event)" id="uploaded-img">
-                                        </canvas> -->
+                                        <canvas  ng-mousedown="ocrselect.initBox($event)" ng-mousemove="ocrselect.drawBox($event)" ng-mouseup="ocrselect.captureBox($event)" id="uploaded-img">
+                                        </canvas>
 
-                                        <div id="pdfContainer" class = "pdf-content">
-                                        </div>
+                                       <!-- <div id="pdfContainer" class = "pdf-content">
+				       </div> -->
                                       
 
-                                        <!-- <div ng-class="ocrselect.isActive" ng-style="ocrselect.boxSelect" id="box-select"></div> -->
+                                        <div ng-class="ocrselect.isActive" ng-style="ocrselect.boxSelect" id="box-select"></div>
                                         </div>
                                         <form id="pdf-controls">
                                         </form>
