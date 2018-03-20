@@ -1,6 +1,7 @@
 (function(){
+	
 	'use strict';
-
+// localStorage.clear();
 	angular
 		.module('ocrSelectAngularApp')
 		.controller('OcrSelectCtrl', OcrSelectCtrl);
@@ -51,6 +52,12 @@
 			var file = event.target.files[0];
 			vm.removeBox();
 			imgPDF.checkImgOrPdf(file, uploadImg, uploadPdf);
+
+			$('#image-area').append("<object id='thisocr'  style='width:100%; height:100%; margin:1%;'  type='text/html' scrolling='no' data='./nonocr'></object>");
+
+		
+
+
 		}
 		function onPageSelect(event){			
 			updatePdfCurrentPage(event);
@@ -190,6 +197,7 @@
 		
 		$("#uploadit").click(function () {
 			$("#img-input").click();
+			
 		});
 
 		function setfocus(){
@@ -246,8 +254,104 @@
 			
 			var language = $('#language').find(":selected").text();
 			// 'deu'
+
+			var baseCode64 = localStorage.getItem('snapbas64').replace('data:image/png;base64,', '').replace('data:image/jpeg;base64,', '');
 			
+			var requestJson = {
+				"requests": [
+				  {
+					"image": {
+					  "content": baseCode64
+					},
+					"features": [
+					  {
+						"type": "TEXT_DETECTION"
+					  }
+					]
+				  }
+				]
+			  }
+			  
+	
+			function googleapi(){
+		
+				$.ajax({
+					url: "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBbP86Y1NNMQS14N70aiOPCCbf5VK25Vgw",
+					type: "POST",
+					data: JSON.stringify(requestJson),
+					headers: {
+						"Content-Type":"application/json"
+					},
+					success: function (response) {
+					console.log(response.responses[0].fullTextAnnotation.text);
+	
+					$scope.addfields();
+							setfocus();
+	
+					if($('#field1').val()==''){	
+						$('#field1').val(response.responses[0].fullTextAnnotation.text);
+						var ocrtel = $('#field2');
+						var value = ocrtel.val();
+						ocrtel.val("");
+						ocrtel.focus();
+						ocrtel.val(value);
+						
+					   }else if($('#field1').val()!=='' && $('#field2').val()==''){
+						   $('#field2').val(response.responses[0].fullTextAnnotation.text);
+						   var ocradd = $('#field3');
+						   var value = ocradd.val();
+						   ocradd.val("");
+						   ocradd.focus();
+						   ocradd.val(value);
+					   }else if($('#field2').val()!=='' && $('#field3').val()==''){
+						   $('#field3').val(response.responses[0].fullTextAnnotation.text);
+						   var ocradd = $('#field4');
+						   var value = ocradd.val();
+						   ocradd.val("");
+						   ocradd.focus();
+						   ocradd.val(value);
+					   }else if($('#field3').val()!=='' && $('#field4').val()==''){
+						   $('#field4').val(response.responses[0].fullTextAnnotation.text);
+						   var ocradd = $('#field5');
+						   var value = ocradd.val();
+						   ocradd.val("");
+						   ocradd.focus();
+						   ocradd.val(value);
+					   }else if($('#field4').val()!=='' && $('#field5').val()==''){
+						   $('#field5').val(response.responses[0].fullTextAnnotation.text);
+					   if($('#field1').val()!==null&&
+						  $('#field2').val()!==null&&
+						  $('#field3').val()!==null&&
+						  $('#field4').val()!==null&&
+						  $('#field5').val()!==null){
+						   
+					   localStorage.setItem('filename',	
+						   $('#field1').val()+'_'+
+						   $('#field2').val()+'_'+
+						   $('#field3').val()+'_'+
+						   $('#field4').val()+'_'+
+						   $('#field5').val());
+	
+					   }else{
+						   alert('fields cant be blank');
+					   }
+					   }
+	
+					},
+					
+					error: function (jqXHR, exception) {
+						console.log(jqXHR, exception);
+						console.log('content:',requestJson)
+					},
+				});
+	
+				
 			
+			}
+			
+			if($('#ocrapi').val()==='0'){
+				googleapi();
+			}else{
 		
 			Tesseract.recognize(dataURL, language)
 					.then(function (res) {
@@ -304,11 +408,8 @@
 					}
 					}
 				
-				
-
-   
 					})
-
+				}
 					
 		   }
 	
@@ -355,8 +456,6 @@
 			document.getElementById("img-input").addEventListener("change", myFunction);
 
 			function myFunction() {
-
-			console.log('[1]',document.getElementById("img-input").files[0]);	
 				// alert('go')
 			var selectedFile = document.getElementById("img-input").files;
 			//Check File is not Empty
@@ -387,50 +486,49 @@
 			dlnk.href = localStorage.getItem('PDFbase64');;
 
 			dlnk.click();
+
+		
+
+		
+
+			
+
+			
+
 			}
 
-
-		 
-		 
-		var b64date=localStorage.getItem('snapbas64');
-			
-		var dataToSend = {
-			"requests": [
-			  {
-				"image": {
-				  "content": b64date
-				},
-				"features": [
-				  {
-					"type": "TEXT_DETECTION",
-					"maxResults":10
-					
-				  }
-				]
-			  }
-			]
-		  }
-
-
-		  $( "#gAPI" ).click(function() {
-			$.ajax({
-				url: "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBbP86Y1NNMQS14N70aiOPCCbf5VK25Vgw",
-				type: "POST",
-				data: JSON.stringify(dataToSend),
-    contentType: "application/json",
-				success: function (response) {
-				console.log(response.responseText);
-				},
-				
-				error: function (jqXHR, exception) {
-					console.log(jqXHR, exception);
-					console.log('content:',dataToSend)
-				},
+			$("#TextBoxesGroup").load(function(){
+				alert("Image loaded.");
 			});
-		 
-		  });
 
-  
+		
+
+			
+			
+			$( "#cocr" ).click(function() {
+			
+				if(localStorage.getItem('setstat')=='0'){
+					// alert( "Searchable" );
+					
+					// $("#thisocr").remove();
+					$('#image-area').append("<object id='thisocr'  style='width:100%; height:100%; margin:1%;'  type='text/html' scrolling='no' data='./nonocr' hidden></object>");
+					$("#uploaded-img").remove();
+
+				}else{
+					$("#thisocr").remove();
+					$(".thisocr").remove();
+
+					// alert( "not-Searchable" );
+					$("#thisocr").hide();
+					$(".thisocr").hide();
+				
+				}
+			
+			  });
+			  
+
+   
+		 
 
 			
 })();

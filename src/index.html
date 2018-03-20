@@ -1,10 +1,20 @@
 <html ng-app="ocrSelectAngularApp">
    <head>
       <title>OCR Select</title>
-      <link rel="stylesheet" type="text/css" href="./css.css">
+      
       <meta charset="UTF-8">
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+     
+     
+   
+      <script type="text/javascript" src="./textlayerbuilder.js"></script>
+
+      
+
+
       <link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
       <link rel="stylesheet" type="text/css" href="css/style.css">
+      
    </head>
    <body ng-controller="OcrSelectCtrl as ocrselect">
       <br><br><br>
@@ -38,10 +48,10 @@
                                                     <select class="form-control" ng-model="ocrselect.langs.selectedLang" name="language" id="language" ng-options="lang as lang for lang in ocrselect.langs.list">
                                                     </select>
                                                     <label>API:</label>
-                                                    <select  class="form-control" >
-                                                      <option>Teseract JS</option>
-                                                       <option>Google API</option>
-                                                       <option>Other's</option>
+                                                    <select  class="form-control" id="ocrapi">  
+                                                       <option value="0">Google API</option>
+                                                       <option value="1">Teseract JS</option>
+                                                       <option disabled>Other's</option>
                                                     </select>
                                                     <label>Page:</label>
                                                     <select  class="form-control" ng-class="ocrselect.dropZone" ng-model="ocrselect.pdf.currentPage" name="pageSelect" id="pageSelect" ng-options="page as page for page in ocrselect.pdf.pageList" ng-change="ocrselect.onPageSelect(ocrselect.pdf.currentPage)">
@@ -67,8 +77,16 @@
 
                                                                               <!-- <input type='button' value='Get TextBox Value' id='getButtonValue'> -->
 
-                                                                              <input type='button' value='Google OCR' id="gAPI" class="btn btn-secondary btn-block">
-<br>
+                                                                              <!-- <input type='button' value='Google OCR' id="gAPI" class="btn btn-secondary btn-block"> -->
+
+                                                                              <!-- <input type='button' value='Validate' id="refresh" class="btn btn-secondary btn-block"> -->
+
+                                                                              <input type='button' value='Analyze' id="cocr" class="btn btn-secondary btn-block">
+
+                                                                              
+                                                                            
+
+                                                                              <br>
                                                                               <a id='saveit' download="" style="display:none;" /> 
             
             <a href="#" onclick="downloadPDF();" class="btn btn-secondary btn-block">Save</a>
@@ -88,25 +106,27 @@
                                         
 
                                         <div class="float-left ">
-
-                                                      
-
                                  <div class="container">
                                         <div id="image-section" > 
-
-                                             
-
+                                                
                                         <div id="image-area" class="drop-zone" on-drag-over="ocrselect.dragOverHandler" on-drag-end="ocrselect.dragEndHandler" on-drop="ocrselect.dropHandler" >
-                                            
-                                        <canvas  ng-mousedown="ocrselect.initBox($event)" ng-mousemove="ocrselect.drawBox($event)" ng-mouseup="ocrselect.captureBox($event)" id="uploaded-img">
+                                       
+                                        <object class="thisocr" id="thisocr" type="text/html" data="./nonocr"
+                                                        style="width:100%; height:100%; margin:0%; " scrolling="no" > 
+                                        </object>
+
+                                        <canvas class="uploaded-img" id="uploaded-img" ng-mousedown="ocrselect.initBox($event)" ng-mousemove="ocrselect.drawBox($event)" ng-mouseup="ocrselect.captureBox($event)" >
+                                                
                                         </canvas>
-
-                                       <!-- <div id="pdfContainer" class = "pdf-content">
-				       </div> -->
-                                      
-
-                                        <div ng-class="ocrselect.isActive" ng-style="ocrselect.boxSelect" id="box-select"></div>
+                                        
+                                        <div ng-class="ocrselect.isActive" ng-style="ocrselect.boxSelect" id="box-select">
                                         </div>
+
+                                        <div id="pdfContainer" class = "pdf-content">
+                                                </div>
+                                        </div>
+
+
                                         <form id="pdf-controls">
                                         </form>
 
@@ -117,130 +137,27 @@
                                      
          </div>   
          </div>
-      
-     
+
+       
         
       </center>
   
 
-      <script type="text/javascript" src="./jquery-1.9.1.js"></script>
+     
       <script src="angular.min.js"></script>
       <script src="angular-route.min.js"></script>
       <script src="angular-resource.min.js"></script>
-      <script type="text/javascript" src="./pdf.js"></script>	
+
+     
+
       <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
       <script type="text/javascript" src="app.js"></script>
       <script type="text/javascript" src="allFactories.js"></script>
       <script type="text/javascript" src="allControllers.js"></script>
-      <script type="text/javascript" src="./textlayerbuilder.js"></script>
-      <script type="text/javascript">
-        $(window).load(function(){
-        
-        
-        var pdfBase64 =localStorage.getItem('PDFbase64').replace("data:application/pdf;base64,","");;
-        
-        // console.log(pdfBase64)
-        var scale = 1; //Set this to whatever you want. This is basically the "zoom" factor for the PDF.
-        
-        /**
-         * Converts a base64 string into a Uint8Array
-         */
-        function base64ToUint8Array(base64) {
-            var raw = atob(base64); //This is a native function that decodes a base64-encoded string.
-            var uint8Array = new Uint8Array(new ArrayBuffer(raw.length));
-            for(var i = 0; i < raw.length; i++) {
-                uint8Array[i] = raw.charCodeAt(i);
-            }
-        
-            return uint8Array;
-        }
-        
-        function loadPdf(pdfData) {
-            PDFJS.disableWorker = true; //Not using web workers. Not disabling results in an error. This line is
-                                        //missing in the example code for rendering a pdf.
-            
-            var pdf = PDFJS.getDocument(pdfData);
-            pdf.then(renderPdf);                               
-        }
-        
-        function renderPdf(pdf) {
-            pdf.getPage(1).then(renderPage);
-        }
-        
-        function renderPage(page) {
-            var viewport = page.getViewport(scale);
-            var $canvas = jQuery("<canvas></canvas>");
-            
-            //Set the canvas height and width to the height and width of the viewport
-            var canvas = $canvas.get(0);
-            var context = canvas.getContext("2d");
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            
-            //Append the canvas to the pdf container div
-            jQuery("#pdfContainer").append($canvas);
-            
-            //The following few lines of code set up scaling on the context if we are on a HiDPI display
-            var outputScale = getOutputScale();
-            if (outputScale.scaled) {
-                var cssScale = 'scale(' + (1 / outputScale.sx) + ', ' +
-                    (1 / outputScale.sy) + ')';
-                CustomStyle.setProp('transform', canvas, cssScale);
-                CustomStyle.setProp('transformOrigin', canvas, '0% 0%');
-        
-                if ($textLayerDiv.get(0)) {
-                    CustomStyle.setProp('transform', $textLayerDiv.get(0), cssScale);
-                    CustomStyle.setProp('transformOrigin', $textLayerDiv.get(0), '0% 0%');
-                }
-            }
-            
-            context._scaleX = outputScale.sx;
-            context._scaleY = outputScale.sy;
-            if (outputScale.scaled) {
-                context.scale(outputScale.sx, outputScale.sy);
-            }     
-            
-            var canvasOffset = $canvas.offset();
-            var $textLayerDiv = jQuery("<div />")
-                .addClass("textLayer")
-                .css("height", viewport.height + "px")
-                .css("width", viewport.width + "px")
-                .offset({
-                    top: canvasOffset.top,
-                    left: canvasOffset.left
-                });
-            
-            jQuery("#pdfContainer").append($textLayerDiv);
-            
-            page.getTextContent().then(function(textContent) {
-                var textLayer = new TextLayerBuilder($textLayerDiv.get(0), 0); 
-                                                                               
-                textLayer.setTextContent(textContent);
-                
-                var renderContext = {
-                    canvasContext: context,
-                    viewport: viewport,
-                    textLayer: textLayer
-                };
-                
-                page.render(renderContext);
-            });
-        }
-        
-        var pdfData = base64ToUint8Array(pdfBase64);
-        loadPdf(pdfData); 
-        setTimeout(function(){    
-            if ($(".textLayer").text().length > 0) {
-            alert('its seachable')
-            }else{
-                alert('its not seachable123')
-                
-            }
-        }, 3000);
-        });
+      <script type="text/javascript" src="external/pdf.js"></script>
+   
+      
 
-        
-        
-        </script>
+
    </body>
 </html>
